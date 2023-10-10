@@ -9,14 +9,19 @@ const app = express();
 app.use(express.json());
 
 // Configura CORS para permitir solicitudes desde http://localhost:5173
-app.use(cors({ origin: 'http://localhost:5173' }));
+//app.use(cors({ origin: 'http://localhost:5173' }));
+// Configurar CORS para permitir cualquier origen
+app.use(cors());
 
 app.use('/api', peopleRoutes); 
 app.use('/api', rolesRoutes);
 app.use('/api', userConnection);
 
-app.listen(3000, () => {
-  console.log('Server on port', 3000);
+
+const port = process.env.PORT || 3000; // Usa el puerto proporcionado por Azure o el puerto 3000 si no está definido
+
+app.listen(port, () => {
+  console.log('Server is running on port', port);
 });
 
 
