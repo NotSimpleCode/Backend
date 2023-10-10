@@ -1,0 +1,129 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model cosechas {
+  ID_COSECHA          Int                   @id
+  FECHA_COSECHA       DateTime              @db.Date
+  historial__cosechas historial__cosechas[]
+  ventas              ventas[]
+}
+
+model historial__cosechas {
+  ID_LOTE    Int
+  ID_COSECHA Int
+  CANTIDAD   Float    @db.Float
+  cosechas   cosechas @relation(fields: [ID_COSECHA], references: [ID_COSECHA], onUpdate: Restrict, map: "FK_HISTORIAL_COS_FK_ID_COSECHA")
+  lotes      lotes    @relation(fields: [ID_LOTE], references: [ID_LOTE], onUpdate: Restrict, map: "FK_HISTORIAL_COS_FK_ID_LOTE")
+
+  @@id([ID_LOTE, ID_COSECHA])
+  @@index([ID_COSECHA], map: "FK_HISTORIAL_COS_FK_ID_COSECHA")
+}
+
+model historial_plagas {
+  ID_LOTE          Int
+  ID_PLAGA         Int
+  FECHA_AFECTACION DateTime @db.Date
+  lotes            lotes    @relation(fields: [ID_LOTE], references: [ID_LOTE], onUpdate: Restrict, map: "FK_HIST_PLAG_FK_ID_LOTE")
+  plagas           plagas   @relation(fields: [ID_PLAGA], references: [ID_PLAGA], onUpdate: Restrict, map: "FK_HIST_PLAG_FK_ID_PLAGA")
+
+  @@id([ID_LOTE, ID_PLAGA])
+  @@index([ID_PLAGA], map: "FK_HIST_PLAG_FK_ID_PLAGA")
+}
+
+model lotes {
+  ID_LOTE             Int                   @id
+  TOTAL_PLANTAS       Int
+  NOMBRE_LOTES        String                @db.VarChar(20)
+  historial__cosechas historial__cosechas[]
+  historial_plagas    historial_plagas[]
+  lotes_usuarios      lotes_usuarios[]
+  sectores            sectores?
+}
+
+model lotes_usuarios {
+  my_row_id  BigInt    @id @db.UnsignedBigInt
+  ID_LOTE    Int?
+  ID_PERSONA Int?
+  personas   personas? @relation(fields: [ID_PERSONA], references: [ID_PERSONA], onDelete: Restrict, onUpdate: Restrict, map: "FK_LOTES_USUARIOS_FK_ID_PERS")
+  lotes      lotes?    @relation(fields: [ID_LOTE], references: [ID_LOTE], onDelete: Restrict, onUpdate: Restrict, map: "FK_RELATIONSHIP_15")
+
+  @@index([ID_PERSONA], map: "FK_LOTES_USUARIOS_FK_ID_PERS")
+  @@index([ID_LOTE], map: "FK_RELATIONSHIP_15")
+}
+
+model personas {
+  ID_PERSONA       Int              @id
+  NOMBRE_PERSONA   String           @db.VarChar(50)
+  APELLIDO_PERSONA String           @db.VarChar(50)
+  TELEFONO_PERSONA String           @db.VarChar(40)
+  lotes_usuarios   lotes_usuarios[]
+  usuarios         usuarios[]
+  ventas           ventas[]
+}
+
+model plagas {
+  ID_PLAGA          Int                @id
+  NOMBRE_PLAGA      String             @db.VarChar(50)
+  DESCRIPCION_PLAGA String             @db.VarChar(100)
+  historial_plagas  historial_plagas[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model roles {
+  ID_ROL     Int        @id
+  nombre_rol String     @db.VarChar(30)
+  usuarios   usuarios[]
+}
+
+model sectores {
+  ID_SECTOR            Int          @id
+  ID_LOTE              String       @db.VarChar(20)
+  ID_TIPO_PLANTA       Int
+  NUMERO_TOTAL_PLANTAS Int
+  lotes                lotes        @relation(fields: [ID_SECTOR], references: [ID_LOTE], onUpdate: Restrict, map: "FK_SECTORES_FK_ID_LOTE")
+  tipo_plantas         tipo_plantas @relation(fields: [ID_TIPO_PLANTA], references: [ID_TIPO_PLANTA], onUpdate: Restrict, map: "FK_SECTORES_FK_ID_TIPO_PLANTA")
+
+  @@index([ID_TIPO_PLANTA], map: "FK_SECTORES_FK_ID_TIPO_PLANTA")
+}
+
+model tipo_plantas {
+  ID_TIPO_PLANTA Int        @id
+  NOMBRE_PLANTA  String     @db.VarChar(30)
+  sectores       sectores[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model usuarios {
+  ID_PERSONA       Int
+  ID_ROL           Int
+  NOMBRE_USUARIO   String   @unique(map: "UNK_USUARIOS") @db.VarChar(20)
+  PASSWORD_USUARIO String   @db.VarChar(40)
+  CORREO_USUARIO   String   @db.VarChar(30)
+  personas         personas @relation(fields: [ID_PERSONA], references: [ID_PERSONA], onUpdate: Restrict, map: "FK_USUARIOS_FK_ID_PERSONA")
+  roles            roles    @relation(fields: [ID_ROL], references: [ID_ROL], onUpdate: Restrict, map: "FK_USUARIOS_FK_ID_ROL")
+
+  @@id([ID_PERSONA, ID_ROL])
+  @@index([ID_ROL], map: "FK_USUARIOS_FK_ID_ROL")
+}
+
+model ventas {
+  ID_VENTA       Int      @id
+  ID_PERSONA     Int
+  ID_COSECHA     Int
+  ESTADO_VENTA   String   @db.VarChar(2)
+  VALOR_VENTA    Float    @db.Float
+  FECHA_VENTA    DateTime @db.Date
+  CANTIDAD_VENTA Int
+  TIPO_CAFE      String   @db.VarChar(20)
+  cosechas       cosechas @relation(fields: [ID_COSECHA], references: [ID_COSECHA], onUpdate: Restrict, map: "FK_VENTAS_FK_ID_COSECHA")
+  personas       personas @relation(fields: [ID_PERSONA], references: [ID_PERSONA], onUpdate: Restrict, map: "FK_VENTAS_FK_ID_PERSONA")
+
+  @@index([ID_COSECHA], map: "FK_VENTAS_FK_ID_COSECHA")
+  @@index([ID_PERSONA], map: "FK_VENTAS_FK_ID_PERSONA")
+}
