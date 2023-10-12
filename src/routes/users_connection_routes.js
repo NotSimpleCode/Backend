@@ -107,16 +107,19 @@ router.put('/connection/:id', async (req, res) => {
 
 router.post('/connection', async (req, res) => {
     try {
-        const { nombre_usuario, password_usuario } = req.body;
+        const { NOMBRE_USUARIO, PASSWORD_USUARIO, ID_PERSONA, ID_ROL, CORREO_USUARIO } = req.body;
 
         // Genera un hash de la contraseña
-        const hashedPassword = await bcrypt.hash(password_usuario, 10); // "10" es el costo de la encriptación
+        const hashedPassword = await bcrypt.hash(PASSWORD_USUARIO, 10); // "10" es el costo de la encriptación
 
         // Crea un nuevo usuario con la contraseña encriptada
         const newConnection = await orm.usuarios.create({
             data: {
-                nombre_usuario,
-                password_usuario: hashedPassword // Almacena el hash en la base de datos
+                ID_PERSONA,
+                ID_ROL,
+                NOMBRE_USUARIO,
+                PASSWORD_USUARIO: hashedPassword, // Almacena el hash en la base de datos
+                CORREO_USUARIO
             }
         });
         
