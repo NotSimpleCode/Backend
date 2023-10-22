@@ -57,7 +57,7 @@ router.delete('/historial/plagas/:idlote/:idplaga', async (req, res) => {
         // Elimina el usuario por su ID_PERSONA y el ID_ROL proporcionado en la ruta
         const deleteResult = await orm.historial_plagas.delete({
             where: {
-                ID_LOTE_ID_PLAGA: {
+                AND: {
                     ID_LOTE:parseInt(req.params.idlote),
                     ID_PLAGA:parseInt(req.params.idplaga)
                 }
@@ -83,7 +83,7 @@ router.put('/historial/plagas/:idlote/:idplaga', async (req, res) => {
     try {
         const historialUpdate = await orm.historial_plagas.update({
             where: {
-                ID_LOTE_ID_PLAGA: {
+                AND: {
                     ID_LOTE:parseInt(req.params.idlote),
                     ID_PLAGA:parseInt(req.params.idplaga)
                 }
