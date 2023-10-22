@@ -18,11 +18,9 @@ model historial_plagas {
   ID_LOTE          Int
   ID_PLAGA         Int
   FECHA_AFECTACION DateTime @db.Date
-  lotes            lotes    @relation(fields: [ID_LOTE], references: [ID_LOTE], onUpdate: Restrict, map: "FK_HIST_PLAG_FK_ID_LOTE")
-  plagas           plagas   @relation(fields: [ID_PLAGA], references: [ID_PLAGA], onUpdate: Restrict, map: "FK_HIST_PLAG_FK_ID_PLAGA")
+  ESTADO_PLAGA     String?  @default("A") @db.Char(1)
 
-  @@id([ID_LOTE, ID_PLAGA])
-  @@index([ID_PLAGA], map: "FK_HIST_PLAG_FK_ID_PLAGA")
+  @@id([ID_LOTE, ID_PLAGA, FECHA_AFECTACION])
 }
 
 model lotes {
@@ -30,7 +28,6 @@ model lotes {
   TOTAL_PLANTAS      Int?                 @default(0)
   NOMBRE_LOTE        String               @db.VarChar(20)
   historial_cosechas historial_cosechas[]
-  historial_plagas   historial_plagas[]
   lotes_personas     lotes_personas[]
   sectores           sectores[]
 }
@@ -46,10 +43,9 @@ model personas {
 }
 
 model plagas {
-  ID_PLAGA          Int                @id
-  NOMBRE_PLAGA      String             @db.VarChar(50)
-  DESCRIPCION_PLAGA String             @db.VarChar(100)
-  historial_plagas  historial_plagas[]
+  ID_PLAGA          Int     @id
+  NOMBRE_PLAGA      String  @db.VarChar(50)
+  DESCRIPCION_PLAGA String? @db.VarChar(100)
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -141,11 +137,12 @@ model productos {
 }
 
 model historial_cosechas {
-  ID_LOTE    Int
-  ID_COSECHA Int
-  CANTIDAD   Float    @db.Float
-  cosechas   cosechas @relation(fields: [ID_COSECHA], references: [ID_COSECHA], onUpdate: Restrict, map: "FK_HISTORIAL_COS_FK_ID_COSECHA")
-  lotes      lotes    @relation(fields: [ID_LOTE], references: [ID_LOTE], onUpdate: Restrict, map: "FK_HISTORIAL_COS_FK_ID_LOTE")
+  ID_LOTE      Int
+  ID_COSECHA   Int
+  CANTIDAD     Float    @db.Float
+  ESTADO_PLAGA String?  @default("A") @db.Char(1)
+  cosechas     cosechas @relation(fields: [ID_COSECHA], references: [ID_COSECHA], onUpdate: Restrict, map: "FK_HISTORIAL_COS_FK_ID_COSECHA")
+  lotes        lotes    @relation(fields: [ID_LOTE], references: [ID_LOTE], onUpdate: Restrict, map: "FK_HISTORIAL_COS_FK_ID_LOTE")
 
   @@id([ID_LOTE, ID_COSECHA])
   @@index([ID_COSECHA], map: "FK_HISTORIAL_COS_FK_ID_COSECHA")

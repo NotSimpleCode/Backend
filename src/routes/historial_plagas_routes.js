@@ -31,7 +31,7 @@ router.get('/historial/plagas/:idlote/:idplaga', async (req, res) => {
     try {
         const historialFound = await orm.historial_plagas.findFirst({
             where: {
-                ID_LOTE_ID_PLAGA: {
+                AND: {
                     ID_LOTE:parseInt(req.params.idlote),
                     ID_PLAGA:parseInt(req.params.idplaga)
                 }
