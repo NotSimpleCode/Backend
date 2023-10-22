@@ -7,10 +7,18 @@ const router = Router();
 router.get('/lotes', async (req, res) => {
     try {
         // Realiza la consulta a la base de datos para obtener los elementos 
-        const lotes = await orm.lotes.findMany({});
+        const lotes = await orm.lotes.findMany({
+          
+        });
 
-        // Envía la respuesta con los elementos 
-        res.json(lotes);
+        if(lotes!=0){
+            // Envía la respuesta con los elementos 
+            res.json(lotes);
+        }else{
+            res.status(204).json({ info: "Not Content" });
+        }
+
+        
     } catch (error) {
         console.error("Error fetching lotes:", error);
         res.status(500).json({ error: "Internal server error not have connection" });
@@ -19,9 +27,9 @@ router.get('/lotes', async (req, res) => {
 
 router.get('/lotes/:id', async (req, res) => {
     try {
-        const lotesFound = await orm.lotes.findFirst({
+        const lotesFound = await orm.lotes.findMany({
             where: {
-                ID_lotesA: parseInt(req.params.id)
+                ID_LOTE: parseInt(req.params.id)
             }
         });
 

@@ -13,9 +13,14 @@ router.get('/sectores', async (req, res) => {
             }
         });
 
+        if(sectores!=0){
+            // Envía la respuesta con los elementos 
+            res.json(sectores);
+        }else{
+            res.status(204).json({ info: "Not content" });
+        }
 
-        // Envía la respuesta con los elementos 
-        res.json(sectores);
+        
     } catch (error) {
         console.error("Error fetching sectores:", error);
         res.status(500).json({ error: "Internal server error not have connection" });
@@ -49,16 +54,12 @@ router.get('/sectores/:id', async (req, res) => {
 router.delete('/sectores/:idsector/:idlote', async (req, res) => {
     try {
         const sectorID = parseInt(req.params.idsector);
-        const loteID = parseInt(req.params.idlote);
 
         // Elimina la sectoresa por su ID_sectoresA 
         const deleteResult = await orm.sectores.delete({
 
             where: {
-                ID_SECTOR_ID_LOTE: {
-                    ID_SECTOR: sectorID,
-                    ID_LOTE: loteID
-                }
+                ID_SECTOR:sectorID
             }
 
         });
@@ -96,17 +97,13 @@ router.put('/sectores/:idsector', async (req, res) => {
 });
 
 //METODO que modifica un sector y un lote
-router.put('/sectores/:idsector/:idlote', async (req, res) => {
+router.put('/sectores/:idsector', async (req, res) => {
     try {
-        const loteID = parseInt(req.params.idlote);
         const sectorID = parseInt(req.params.idsector);
 
         const sectoresUpdate = await orm.sectores.update({
             where: {
-                ID_SECTOR_ID_LOTE: {
-                    ID_LOTE: loteID,
-                    ID_PERSONA: sectorID
-                }
+                ID_SECTOR: sectorID
             },
             data: req.body
         });

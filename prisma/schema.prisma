@@ -38,12 +38,12 @@ model historial_plagas {
 
 model lotes {
   ID_LOTE             Int                   @id
-  TOTAL_PLANTAS       Int
-  NOMBRE_LOTES        String                @db.VarChar(20)
+  TOTAL_PLANTAS       Int?                  @default(0)
+  NOMBRE_LOTE         String                @db.VarChar(20)
   historial__cosechas historial__cosechas[]
   historial_plagas    historial_plagas[]
   lotes_personas      lotes_personas[]
-  sectores            sectores?
+  sectores            sectores[]
 }
 
 model personas {
@@ -71,14 +71,15 @@ model roles {
 }
 
 model sectores {
-  ID_SECTOR            Int          @id
-  ID_LOTE              Int
-  ID_TIPO_PLANTA       Int
-  NUMERO_TOTAL_PLANTAS Int
-  lotes                lotes        @relation(fields: [ID_SECTOR], references: [ID_LOTE], onUpdate: Restrict, map: "FK_SECTORES_FK_ID_LOTE")
-  tipo_plantas         tipo_plantas @relation(fields: [ID_TIPO_PLANTA], references: [ID_TIPO_PLANTA], onUpdate: Restrict, map: "FK_SECTORES_FK_ID_TIPO_PLANTA")
+  ID_SECTOR      Int          @id
+  ID_LOTE        Int
+  ID_TIPO_PLANTA Int
+  NUMERO_PLANTAS Int?         @default(1000)
+  lotes          lotes        @relation(fields: [ID_LOTE], references: [ID_LOTE], onUpdate: Restrict, map: "FK_SECTORES_FK_ID_LOTE")
+  tipo_plantas   tipo_plantas @relation(fields: [ID_TIPO_PLANTA], references: [ID_TIPO_PLANTA], onUpdate: Restrict, map: "FK_SECTORES_FK_ID_TIPO_PLANTA")
 
   @@index([ID_TIPO_PLANTA], map: "FK_SECTORES_FK_ID_TIPO_PLANTA")
+  @@index([ID_LOTE], map: "FK_SECTORES_FK_ID_LOTE")
 }
 
 model tipo_plantas {
