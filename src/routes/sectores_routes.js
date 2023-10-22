@@ -29,7 +29,7 @@ router.get('/sectores', async (req, res) => {
 
 router.get('/sectores/:id', async (req, res) => {
     try {
-        const sectoresFound = await orm.sectores.findMany({
+        const sectoresFound = await orm.sectores.findFirst({
             where: {
                 ID_SECTOR: parseInt(req.params.id)
             },
@@ -41,9 +41,11 @@ router.get('/sectores/:id', async (req, res) => {
 
         if (!sectoresFound) {
             return res.status(404).json({ error: "sectores not found" });
+        }else{
+            res.json(sectoresFound);
         }
 
-        res.json(sectoresFound);
+        
     } catch (error) {
         console.error("Error fetching sectores:", error);
         res.status(500).json({ error: "Internal server error not have connection" });
@@ -51,7 +53,7 @@ router.get('/sectores/:id', async (req, res) => {
 });
 
 //elimina un sector asociado a un lote
-router.delete('/sectores/:idsector/:idlote', async (req, res) => {
+router.delete('/sectores/:idsector', async (req, res) => {
     try {
         const sectorID = parseInt(req.params.idsector);
 
@@ -87,32 +89,11 @@ router.put('/sectores/:idsector', async (req, res) => {
 
         if (sectoresUpdate === null) {
             return res.status(404).json({ error: "sectores not found" });
+        }else{
+            return res.json({ info: "sectores updated successfully" });
         }
 
-        return res.json({ info: "sectores updated successfully" });
-    } catch (error) {
-        console.error("Error updating sectores:", error);
-        return res.status(500).json({ error: "Internal server error not have connection" });
-    }
-});
-
-//METODO que modifica un sector y un lote
-router.put('/sectores/:idsector', async (req, res) => {
-    try {
-        const sectorID = parseInt(req.params.idsector);
-
-        const sectoresUpdate = await orm.sectores.update({
-            where: {
-                ID_SECTOR: sectorID
-            },
-            data: req.body
-        });
-
-        if (sectoresUpdate === null) {
-            return res.status(404).json({ error: "sectores not found" });
-        }
-
-        return res.json({ info: "sectores updated successfully" });
+        
     } catch (error) {
         console.error("Error updating sectores:", error);
         return res.status(500).json({ error: "Internal server error not have connection" });

@@ -24,7 +24,7 @@ router.get('/userlotes', async (req, res) => {
 
 router.get('/userlotes/:id', async (req, res) => {
     try {
-        const userlotesFound = await orm.lotes_personas.findMany({
+        const userlotesFound = await orm.lotes_personas.findFirst({
             where: {
                 ID_LOTE: parseInt(req.params.id)
             },
@@ -35,9 +35,11 @@ router.get('/userlotes/:id', async (req, res) => {
 
         if (!userlotesFound) {
             return res.status(404).json({ error: "userlotes not found" });
+        }else{
+            res.json(userlotesFound);
         }
 
-        res.json(userlotesFound);
+        
     } catch (error) {
         console.error("Error fetching userlotes:", error);
         res.status(500).json({ error: "Internal server error not have connection" });
@@ -85,9 +87,11 @@ router.put('/userlotes/:idlote', async (req, res) => {
 
         if (userlotesUpdate === null) {
             return res.status(404).json({ error: "userlotes not found" });
+        }else{
+            return res.json({ info: "userlotes updated successfully" });
         }
 
-        return res.json({ info: "userlotes updated successfully" });
+        
     } catch (error) {
         console.error("Error updating userlotes:", error);
         return res.status(500).json({ error: "Internal server error not have connection" });
@@ -112,9 +116,11 @@ router.put('/userlotes/:idlote/:idperson', async (req, res) => {
 
         if (userlotesUpdate === null) {
             return res.status(404).json({ error: "userlotes not found" });
+        }else{
+            return res.json({ info: "userlotes updated successfully" });
         }
 
-        return res.json({ info: "userlotes updated successfully" });
+        
     } catch (error) {
         console.error("Error updating userlotes:", error);
         return res.status(500).json({ error: "Internal server error not have connection" });

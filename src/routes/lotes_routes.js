@@ -31,7 +31,7 @@ router.get('/lotes', async (req, res) => {
 
 router.get('/lotes/:id', async (req, res) => {
     try {
-        const lotesFound = await orm.lotes.findMany({
+        const lotesFound = await orm.lotes.findFirst({
             where: {
                 ID_LOTE: parseInt(req.params.id)
             },
@@ -43,9 +43,11 @@ router.get('/lotes/:id', async (req, res) => {
 
         if (!lotesFound) {
             return res.status(404).json({ error: "lotes not found" });
+        }else{
+            res.json(lotesFound);
         }
 
-        res.json(lotesFound);
+        
     } catch (error) {
         console.error("Error fetching lotes:", error);
         res.status(500).json({ error: "Internal server error not have connection" });
@@ -86,9 +88,11 @@ router.put('/lotes/:id', async (req, res) => {
 
         if (lotesUpdate === null) {
             return res.status(404).json({ error: "lotes not found" });
+        }else{
+            return res.json({ info: "lotes updated successfully" });
         }
 
-        return res.json({ info: "lotes updated successfully" });
+        
     } catch (error) {
         console.error("Error updating lotes:", error);
         return res.status(500).json({ error: "Internal server error not have connection" });

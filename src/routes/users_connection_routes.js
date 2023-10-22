@@ -105,9 +105,11 @@ router.put('/connection/:id', async (req, res) => {
 
         if (connectionUpdate === null) {
             return res.status(404).json({ error: "Connection not found" });
+        }else{
+            return res.json({ info: "Connection updated successfully" });
         }
 
-        return res.json({ info: "Connection updated successfully" });
+        
     } catch (error) {
         console.error("Error updating connection:", error);
         return res.status(500).json({ error: "Internal server error" });

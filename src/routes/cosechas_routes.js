@@ -37,9 +37,11 @@ router.get('/cosechas/:id', async (req, res) => {
 
         if (!foundCosecha) {
             return res.status(404).json({ error: "Cosechas not found" });
+        }else{
+            res.json(foundCosecha);
         }
 
-        res.json(foundCosecha);
+        
     } catch (error) {
         console.error("Error fetching Cosechas:", error);
         res.status(500).json({ error: "Internal server error" });
@@ -82,9 +84,11 @@ router.put('/cosechas/:id', async (req, res) => {
 
         if (CosechasUpdate === null) {
             return res.status(404).json({ error: "Cosechas not found" });
+        }else{
+            return res.json({ info: "Cosechas updated successfully" });
         }
 
-        return res.json({ info: "Cosechas updated successfully" });
+        
     } catch (error) {
         console.error("Error updating Cosechas:", error);
         return res.status(500).json({ error: "Internal server error" });

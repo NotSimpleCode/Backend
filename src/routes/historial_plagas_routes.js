@@ -12,8 +12,12 @@ router.get('/historial/plagas', async (req, res) => {
             
         });
 
-        // Envía la respuesta con los elementos de la página actual
-        res.json(historials);
+        if(historials != 0){
+            res.json(historials);
+        }else{
+            res.status(204).json({ info: "Not Content" });
+        }
+
     } catch (error) {
         console.error("Error fetching historials:", error);
         res.status(500).json({ error: "Internal server error" });
@@ -25,7 +29,7 @@ router.get('/historial/plagas', async (req, res) => {
 
 router.get('/historial/plagas/:idlote/:idplaga', async (req, res) => {
     try {
-        const historialFound = await orm.historial_plagas.findMany({
+        const historialFound = await orm.historial_plagas.findFirst({
             where: {
                 ID_LOTE_ID_PLAGA: {
                     ID_LOTE:parseInt(req.params.idlote),
@@ -36,10 +40,8 @@ router.get('/historial/plagas/:idlote/:idplaga', async (req, res) => {
 
         if (!historialFound) {
             return res.status(404).json({ error: "historial not found" });
-        }else if(historialFound != 0){
-            res.json(historialFound);
         }else{
-            res.status(204).json({ info: "Not Content" });
+            res.status(200).json(historialFound);
         }
 
         
@@ -91,9 +93,11 @@ router.put('/historial/plagas/:idlote/:idplaga', async (req, res) => {
 
         if (historialUpdate === null) {
             return res.status(404).json({ error: "historial not found" });
+        }else{
+            return res.json({ info: "historial updated successfully" });
         }
 
-        return res.json({ info: "historial updated successfully" });
+        
     } catch (error) {
         console.error("Error updating historial:", error);
         return res.status(500).json({ error: "Internal server error" });

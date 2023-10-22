@@ -38,9 +38,11 @@ router.get('/roles/:id', async (req, res) => {
 
         if (!foundRol) {
             return res.status(404).json({ error: "Rol not found" });
+        }else{
+            res.json(foundRol);
         }
 
-        res.json(foundRol);
+        
     } catch (error) {
         console.error("Error fetching Rol:", error);
         res.status(500).json({ error: "Internal server error" });
@@ -83,9 +85,11 @@ router.put('/roles/:id', async (req, res) => {
 
         if (RolUpdate === null) {
             return res.status(404).json({ error: "Rol not found" });
+        }else{
+            return res.json({ info: "Rol updated successfully" });
         }
 
-        return res.json({ info: "Rol updated successfully" });
+        
     } catch (error) {
         console.error("Error updating Rol:", error);
         return res.status(500).json({ error: "Internal server error" });
