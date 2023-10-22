@@ -8,7 +8,10 @@ router.get('/lotes', async (req, res) => {
     try {
         // Realiza la consulta a la base de datos para obtener los elementos 
         const lotes = await orm.lotes.findMany({
-          
+          include:
+          {
+            sectores:true
+          }
         });
 
         if(lotes!=0){
@@ -30,6 +33,9 @@ router.get('/lotes/:id', async (req, res) => {
         const lotesFound = await orm.lotes.findMany({
             where: {
                 ID_LOTE: parseInt(req.params.id)
+            },
+            include:{
+                sectores:true
             }
         });
 
