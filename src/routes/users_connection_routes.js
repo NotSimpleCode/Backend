@@ -7,6 +7,21 @@ const router = Router();
 const elementosPorPagin = 10; // Cambia esto según tus necesidades
 const paginaPredeterminada = 1; // Página inicial
 
+router.get('/connection/count', async (req, res) => {
+    try {
+        const number = await orm.usuarios.count({})
+        if (number!=0) {
+            res.status(200).json(number)
+        }else{
+            res.status(204).json({ info: "Not content" })
+        }
+    } catch (error) {
+        console.error("Error counting connections:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+
 router.get('/connection', async (req, res) => {
     try {
         const { pagina = paginaPredeterminada, elementos = elementosPorPagin } = req.query;
@@ -20,6 +35,9 @@ router.get('/connection', async (req, res) => {
         const connections = await orm.usuarios.findMany({
             skip: startIndex,
             take: elementosPorPagina,
+            include:{
+                roles:true
+            }
         });
 
         // Envía la respuesta con los elementos de la página actual
@@ -38,6 +56,9 @@ router.get('/connection/:id', async (req, res) => {
         const connectionFound = await orm.usuarios.findFirst({
             where: {
                 ID_PERSONA: parseInt(req.params.id)
+            },
+            include:{
+                roles:true
             }
         });
 
@@ -160,11 +181,6 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ error: "Internal server error not connection" });
     }
 });
-
-
-
-//http://localhost:3000/api/connection (registro de roles y usuarios)
-//http://localhost:3000/api/login (preguntar login)
 
 
 

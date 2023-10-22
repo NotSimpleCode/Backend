@@ -1,10 +1,12 @@
 import { Router } from "express";
-import {orm} from "../db.js"
+import {orm} from "../db.js";
 
 const router = Router();
 
 const elementosPorPagin = 10; // Cambia esto según tus necesidades
 const paginaPredeterminada = 1; // Página inicial
+
+
 
 router.get('/person', async (req, res) => {
     try {
