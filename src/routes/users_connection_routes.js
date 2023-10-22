@@ -4,8 +4,6 @@ import bcrypt from 'bcrypt';
 
 const router = Router();
 
-const elementosPorPagin = 10; // Cambia esto según tus necesidades
-const paginaPredeterminada = 1; // Página inicial
 
 router.get('/connection/count', async (req, res) => {
     try {
@@ -24,17 +22,9 @@ router.get('/connection/count', async (req, res) => {
 
 router.get('/connection', async (req, res) => {
     try {
-        const { pagina = paginaPredeterminada, elementos = elementosPorPagin } = req.query;
-        const paginaActual = parseInt(pagina);
-        const elementosPorPagina = parseInt(elementos); // Aquí estaba el error
-
-        // Calcula el índice de inicio y fin para la paginación
-        const startIndex = (paginaActual - 1) * elementosPorPagina;
 
         // Realiza la consulta a la base de datos para obtener los elementos de la página actual
         const connections = await orm.usuarios.findMany({
-            skip: startIndex,
-            take: elementosPorPagina,
             include:{
                 roles:true
             }
