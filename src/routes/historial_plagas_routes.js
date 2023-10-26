@@ -9,7 +9,9 @@ router.get('/historial/plagas', async (req, res) => {
 
         // Realiza la consulta a la base de datos para obtener los elementos de la página actual
         const historials = await orm.historial_plagas.findMany({
-            
+            include:{
+                plagas:true
+            }
         });
 
         if(historials != 0){
@@ -35,6 +37,9 @@ router.get('/historial/plagas/:idlote/:idplaga', async (req, res) => {
                     ID_LOTE:parseInt(req.params.idlote),
                     ID_PLAGA:parseInt(req.params.idplaga)
                 }
+            },
+            include:{
+                plagas:true
             }
         });
 

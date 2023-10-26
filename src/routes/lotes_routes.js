@@ -10,8 +10,7 @@ router.get('/lotes', async (req, res) => {
         const lotes = await orm.lotes.findMany({
           include:
           {
-            sectores:true,
-            historial_plagas:true
+            sectores:true
           }
         });
 
