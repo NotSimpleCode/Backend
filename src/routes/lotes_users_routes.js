@@ -9,7 +9,8 @@ router.get('/userlotes', async (req, res) => {
         // Realiza la consulta a la base de datos para obtener los elementos 
         const userlotes = await orm.lotes_personas.findMany({
             include: {
-                personas: true
+                lotes: true,
+                personas:true
             }
         });
 
@@ -21,15 +22,15 @@ router.get('/userlotes', async (req, res) => {
         res.status(500).json({ error: "Internal server error not have connection" });
     }
 });
-
+//busca a que lotes esta asignada una persona
 router.get('/userlotes/:id', async (req, res) => {
     try {
         const userlotesFound = await orm.lotes_personas.findFirst({
             where: {
-                ID_LOTE: parseInt(req.params.id)
+                ID_PERSONA: parseInt(req.params.id)
             },
             include: {
-                personas: true
+                lotes: true
             }
         });
 
@@ -75,12 +76,12 @@ router.delete('/userlotes/:idlote/:idperson', async (req, res) => {
     }
 });
 
-//metodo que modifica todas las personas asignadas a un lote
+//metodo que modifica los datos de una persona asignada
 router.put('/userlotes/:idlote', async (req, res) => {
     try {
         const userlotesUpdate = await orm.lotes_personas.update({
             where: {
-                ID_LOTE: parseInt(req.params.idlote)
+                ID_PERSONA: parseInt(req.params.idlote)
             },
             data: req.body
         });
@@ -98,34 +99,7 @@ router.put('/userlotes/:idlote', async (req, res) => {
     }
 });
 
-//METODO que modifica una persona asignada en un lote
-router.put('/userlotes/:idlote/:idperson', async (req, res) => {
-    try {
-        const loteID = parseInt(req.params.idlote);
-        const personID = parseInt(req.params.idperson);
 
-        const userlotesUpdate = await orm.lotes_personas.update({
-            where: {
-                ID_LOTE_ID_PERSONA: {
-                    ID_LOTE: loteID,
-                    ID_PERSONA: personID
-                }
-            },
-            data: req.body
-        });
-
-        if (userlotesUpdate === null) {
-            return res.status(404).json({ error: "userlotes not found" });
-        }else{
-            return res.json({ info: "userlotes updated successfully" });
-        }
-
-        
-    } catch (error) {
-        console.error("Error updating userlotes:", error);
-        return res.status(500).json({ error: "Internal server error not have connection" });
-    }
-});
 
 
 
