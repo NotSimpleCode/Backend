@@ -4,22 +4,22 @@ import {orm} from "../db.js"
 const router = Router();
 
 
-router.get('/ventas', async (req, res) => {
+router.get('/detalle_facturas', async (req, res) => {
     try {
 
         // Realiza la consulta a la base de datos para obtener los elementos de la página actual
-        const ventas = await orm.ventas.findMany({
+        const detalle_facturas = await orm.detalle_facturas.findMany({
             
         });
 
-        if(ventas != 0){
-            res.json(ventas);
+        if(detalle_facturas != 0){
+            res.json(detalle_facturas);
         }else{
             res.status(204).json({ info: "Not Content" });
         }
 
     } catch (error) {
-        console.error("Error fetching ventas:", error);
+        console.error("Error fetching detalle_facturas:", error);
         res.status(500).json({ error: "Internal server error" });
     }
 });
@@ -27,11 +27,14 @@ router.get('/ventas', async (req, res) => {
 
 
 
-router.get('/ventas/:idventa', async (req, res) => {
+router.get('/detalle_facturas/:idventa/:idproducto', async (req, res) => {
     try {
-        const Found = await orm.ventas.findFirst({
+        const Found = await orm.detalle_facturas.findFirst({
             where: {
-                ID_VENTA:parseInt(req.params.idventa)
+                ID_VENTA_ID_PRODUCTO: {
+                    ID_VENTA:parseInt(req.params.idventa),
+                    ID_PRODUCTO:parseInt(req.params.idproducto)
+                }
             }
         });
 
@@ -48,13 +51,16 @@ router.get('/ventas/:idventa', async (req, res) => {
     }
 });
 
-router.delete('/ventas/:idventa', async (req, res) => {
+router.delete('/detalle_facturas/:idventa/:idproducto', async (req, res) => {
     try {
 
         // Elimina el usuario por su ID_PERSONA y el ID_ROL proporcionado en la ruta
-        const deleteResult = await orm.ventas.delete({
+        const deleteResult = await orm.detalle_facturas.delete({
             where: {
-                ID_VENTA:parseInt(req.params.idventa)
+                ID_VENTA_ID_PRODUCTO: {
+                    ID_VENTA:parseInt(req.params.idventa),
+                    ID_PRODUCTO:parseInt(req.params.idproducto)
+                }
             }
         });
 
@@ -73,11 +79,14 @@ router.delete('/ventas/:idventa', async (req, res) => {
 
 
 
-router.put('/ventas', async (req, res) => {
+router.put('/detalle_facturas/:idventa/:idproducto', async (req, res) => {
     try {
-        const Update = await orm.ventas.update({
+        const Update = await orm.detalle_facturas.update({
             where: {
-                ID_VENTA:parseInt(req.params.idventa)
+                ID_VENTA_ID_PRODUCTO: {
+                    ID_VENTA:parseInt(req.params.idventa),
+                    ID_PRODUCTO:parseInt(req.params.idproducto)
+                }
             },
             data: req.body
         });
@@ -96,9 +105,9 @@ router.put('/ventas', async (req, res) => {
 });
 
 
-router.post('/ventas', async (req, res) => {
+router.post('/detalle_facturas', async (req, res) => {
     try {
-        const newVenta = await orm.ventas.create({
+        const newVenta = await orm.detalle_facturas.create({
             data: req.body
         });
 
@@ -110,16 +119,6 @@ router.post('/ventas', async (req, res) => {
         return res.status(400).json({ error: "Venta could not be created." });
     }
 });
-
-
-
-
-
-
-
-
-
-
 
 
 
