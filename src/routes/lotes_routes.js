@@ -34,9 +34,17 @@ router.get('/lotes/:id', async (req, res) => {
             where: {
                 ID_LOTE: parseInt(req.params.id)
             },
-            include:{
-                sectores:true,
-                historial_plagas:true
+            include: {
+                sectores: {
+                    include: {
+                        tipo_plantas: true
+                    }
+                },
+                historial_plagas: {
+                    include: {
+                        plagas: true
+                    }
+                }
             }
         });
 
