@@ -8,7 +8,7 @@ router.get('/cosechas', async (req, res) => {
 
         // Realiza la consulta a la base de datos para obtener los elementos
         const cosechas = await orm.cosechas.findMany({
-
+            
         });
 
         if (cosechas.length !=0) {

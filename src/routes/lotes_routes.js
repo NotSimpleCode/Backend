@@ -28,7 +28,7 @@ router.get('/lotes', async (req, res) => {
     }
 });
 
-router.get('/lotes/:id', async (req, res) => {
+router.get('/lotes/sec_plag/:id', async (req, res) => {
     try {
         const lotesFound = await orm.lotes.findFirst({
             where: {
@@ -60,6 +60,40 @@ router.get('/lotes/:id', async (req, res) => {
         res.status(500).json({ error: "Internal server error not have connection" });
     }
 });
+
+router.get('/lotes/cosechas/:id', async (req, res) => {
+    try {
+        const lotesFound = await orm.lotes.findFirst({
+            where: {
+                ID_LOTE: parseInt(req.params.id)
+            },
+            include: {
+                historial_cosechas: {
+                    include: {
+                        cosechas: true
+                    }
+                },
+                lotes_personas: {
+                    include: {
+                        personas: true
+                    }
+                }
+            }
+        });
+
+        if (!lotesFound) {
+            return res.status(404).json({ error: "lotes not found" });
+        }else{
+            res.json(lotesFound);
+        }
+
+        
+    } catch (error) {
+        console.error("Error fetching lotes:", error);
+        res.status(500).json({ error: "Internal server error not have connection" });
+    }
+});
+
 
 router.delete('/lotes/:id', async (req, res) => {
     try {

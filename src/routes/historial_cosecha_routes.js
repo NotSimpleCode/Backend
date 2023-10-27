@@ -9,7 +9,9 @@ router.get('/historial/cosechas', async (req, res) => {
 
         // Realiza la consulta a la base de datos para obtener los elementos de la página actual
         const historials = await orm.historial_cosechas.findMany({
-            
+            include:{
+                lotes:true
+            }
         });
 
         if(historials != 0){
@@ -27,14 +29,16 @@ router.get('/historial/cosechas', async (req, res) => {
 
 
 
-router.get('/historial/cosechas/:idlote/:idcosecha', async (req, res) => {
+router.get('/historial/cosechas/:idcosecha', async (req, res) => {
     try {
         const historialFound = await orm.historial_cosechas.findFirst({
             where: {
                 ID_LOTE_ID_COSECHA: {
-                    ID_LOTE:parseInt(req.params.idlote),
                     ID_COSECHA:parseInt(req.params.idcosecha)
                 }
+            },
+            include:{
+                lotes:true
             }
         });
 
