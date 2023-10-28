@@ -61,7 +61,7 @@ router.get('/lotes/sec_plag/:id', async (req, res) => {
     }
 });
 
-router.get('/lotes/cosechas/:id', async (req, res) => {
+router.get('/lotes/cos_pers/:id', async (req, res) => {
     try {
         const lotesFound = await orm.lotes.findFirst({
             where: {

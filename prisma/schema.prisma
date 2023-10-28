@@ -8,8 +8,8 @@ datasource db {
 }
 
 model cosechas {
-  ID_COSECHA         Int                  @id
-  FECHA_COSECHA      DateTime             @db.Date
+  ID_COSECHA         Int                  @id @default(autoincrement())
+  FECHA_COSECHA      DateTime             @unique(map: "UNK_COSECHAS") @db.Date
   historial_cosechas historial_cosechas[]
   ventas             ventas[]
 }
@@ -37,7 +37,7 @@ model lotes {
 }
 
 model personas {
-  ID_PERSONA       Int              @id
+  ID_PERSONA       String           @id @db.VarChar(14)
   NOMBRE_PERSONA   String           @db.VarChar(50)
   APELLIDO_PERSONA String           @db.VarChar(50)
   TELEFONO_PERSONA String           @db.VarChar(40)
@@ -80,7 +80,7 @@ model tipo_plantas {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model usuarios {
-  ID_PERSONA       Int
+  ID_PERSONA       String   @db.VarChar(14)
   ID_ROL           Int
   NOMBRE_USUARIO   String   @unique(map: "UNK_USUARIOS") @db.VarChar(20)
   PASSWORD_USUARIO String   @db.VarChar(255)
@@ -94,7 +94,7 @@ model usuarios {
 
 model ventas {
   ID_VENTA          Int                @id
-  ID_PERSONA        Int
+  ID_PERSONA        String             @db.VarChar(14)
   ID_COSECHA        Int
   ESTADO_VENTA      String             @db.VarChar(1)
   FECHA_VENTA       DateTime           @db.Date
@@ -122,7 +122,7 @@ model detalle_facturas {
 
 model lotes_personas {
   ID_LOTE           Int
-  ID_PERSONA        Int
+  ID_PERSONA        String   @db.VarChar(14)
   FECHA_ASIGNACION  DateTime @db.DateTime(0)
   ESTADO_ASIGNACION String   @db.Char(1)
   lotes             lotes    @relation(fields: [ID_LOTE], references: [ID_LOTE], onUpdate: Restrict, map: "FK_LOTES_USUARIOS_FK_ID_LOTE")
@@ -142,12 +142,11 @@ model productos {
 }
 
 model historial_cosechas {
-  ID_LOTE      Int
-  ID_COSECHA   Int
-  CANTIDAD     Float    @db.Float
-  ESTADO_PLAGA String?  @default("A") @db.Char(1)
-  cosechas     cosechas @relation(fields: [ID_COSECHA], references: [ID_COSECHA], onUpdate: Restrict, map: "FK_HISTORIAL_COS_FK_ID_COSECHA")
-  lotes        lotes    @relation(fields: [ID_LOTE], references: [ID_LOTE], onUpdate: Restrict, map: "FK_HISTORIAL_COS_FK_ID_LOTE")
+  ID_LOTE    Int
+  ID_COSECHA Int
+  CANTIDAD   Float    @db.Float
+  cosechas   cosechas @relation(fields: [ID_COSECHA], references: [ID_COSECHA], onUpdate: Restrict, map: "FK_HISTORIAL_COS_FK_ID_COSECHA")
+  lotes      lotes    @relation(fields: [ID_LOTE], references: [ID_LOTE], onUpdate: Restrict, map: "FK_HISTORIAL_COS_FK_ID_LOTE")
 
   @@id([ID_LOTE, ID_COSECHA])
   @@index([ID_COSECHA], map: "FK_HISTORIAL_COS_FK_ID_COSECHA")

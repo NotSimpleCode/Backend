@@ -45,7 +45,7 @@ router.get('/connection/:id', async (req, res) => {
     try {
         const connectionFound = await orm.usuarios.findFirst({
             where: {
-                ID_PERSONA: parseInt(req.params.id)
+                ID_PERSONA: req.params.id
             },
             include:{
                 roles:true
@@ -98,7 +98,7 @@ router.put('/connection/:id', async (req, res) => {
     try {
         const connectionUpdate = await orm.usuarios.update({
             where: {
-                ID_PERSONA: parseInt(req.params.id)
+                ID_PERSONA: req.params.id
             },
             data: req.body
         });

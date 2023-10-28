@@ -22,15 +22,16 @@ router.get('/userlotes', async (req, res) => {
         res.status(500).json({ error: "Internal server error not have connection" });
     }
 });
-//busca a que lotes esta asignada una persona
-router.get('/userlotes/:id', async (req, res) => {
+//busca todos los registros de lotes que coincidan con un ID persona
+router.get('/userlotes/pers/:idpersona', async (req, res) => {
     try {
-        const userlotesFound = await orm.lotes_personas.findFirst({
+        const userlotesFound = await orm.lotes_personas.findMany({
             where: {
-                ID_PERSONA: parseInt(req.params.id)
+                ID_PERSONA: req.params.idpersona
             },
             include: {
-                lotes: true
+                lotes: true,
+                personas:true
             }
         });
 
@@ -47,17 +48,46 @@ router.get('/userlotes/:id', async (req, res) => {
     }
 });
 
+
+//busca todos los registros de personas que coincidan asignadas a un lote por separado
+router.get('/userlotes/lot/:idlote', async (req, res) => {
+    try {
+        const userlotesFound = await orm.lotes_personas.findMany({
+            where: {
+                ID_LOTE: parseInt(req.params.idlote)
+            },
+            include: {
+                lotes: true,
+                personas:true
+            }
+        });
+
+        if (!userlotesFound) {
+            return res.status(404).json({ error: "userlotes not found" });
+        }else{
+            res.json(userlotesFound);
+        }
+
+        
+    } catch (error) {
+        console.error("Error fetching userlotes:", error);
+        res.status(500).json({ error: "Internal server error not have connection" });
+    }
+});
+
+
+
 //elimina la persona lote asignada
 router.delete('/userlotes/:idlote/:idperson', async (req, res) => {
     try {
         const loteID = parseInt(req.params.idlote);
-        const personID = parseInt(req.params.idperson);
+        const personID = req.params.idperson;
 
         // Elimina la userlotesa por su ID_userlotesA 
         const deleteResult = await orm.lotes_personas.delete({
 
             where: {
-                ID_LOTE_ID_PERSONA: {
+                ID_PERSONA_ID_LOTE: {
                     ID_LOTE: loteID,
                     ID_PERSONA: personID
                 }
@@ -76,12 +106,15 @@ router.delete('/userlotes/:idlote/:idperson', async (req, res) => {
     }
 });
 
-//metodo que modifica los datos de una persona asignada
-router.put('/userlotes/:idlote', async (req, res) => {
+//metodo que modifica todos los datos de una persona asignada
+router.put('/userlotes/:idlote/:idpersona', async (req, res) => {
     try {
         const userlotesUpdate = await orm.lotes_personas.update({
             where: {
-                ID_PERSONA: parseInt(req.params.idlote)
+                ID_PERSONA_ID_LOTE: {
+                    ID_LOTE: parseInt(req.params.idlote),
+                    ID_PERSONA: req.params.idpersona
+                }
             },
             data: req.body
         });
@@ -99,6 +132,34 @@ router.put('/userlotes/:idlote', async (req, res) => {
     }
 });
 
+//parche al estado de una persona en un lote
+router.patch('/userlotes/:idlote/:idpersona', async (req, res) => {
+    try {
+        const { ESTADO_ASIGNACION } = req.body;
+        const userlotesUpdate = await orm.lotes_personas.update({
+            where: {
+                ID_PERSONA_ID_LOTE: {
+                    ID_LOTE: parseInt(req.params.idlote),
+                    ID_PERSONA: req.params.idpersona
+                }
+            },
+            data: {
+                ESTADO_ASIGNACION: ESTADO_ASIGNACION
+            }
+        });
+
+        if (userlotesUpdate === null) {
+            return res.status(404).json({ error: "userlotes not found" });
+        }else{
+            return res.json({ info: "userlotes asignation status updated successfully" });
+        }
+
+        
+    } catch (error) {
+        console.error("Error updating userlotes:", error);
+        return res.status(500).json({ error: "Internal server error not have connection" });
+    }
+});
 
 
 

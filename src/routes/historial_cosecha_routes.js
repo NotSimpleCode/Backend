@@ -7,10 +7,11 @@ const router = Router();
 router.get('/historial/cosechas', async (req, res) => {
     try {
 
-        // Realiza la consulta a la base de datos para obtener los elementos de la página actual
+        //ubica las cosechas echas en que fechas y lotes se hicieron
         const historials = await orm.historial_cosechas.findMany({
             include:{
-                lotes:true
+                lotes:true,
+                cosechas:true
             }
         });
 
@@ -29,16 +30,40 @@ router.get('/historial/cosechas', async (req, res) => {
 
 
 
-router.get('/historial/cosechas/:idcosecha', async (req, res) => {
+router.get('/historial/cosechas/cos/:idcosecha', async (req, res) => {
     try {
-        const historialFound = await orm.historial_cosechas.findFirst({
+        const historialFound = await orm.historial_cosechas.findMany({
             where: {
-                ID_LOTE_ID_COSECHA: {
-                    ID_COSECHA:parseInt(req.params.idcosecha)
-                }
+                ID_COSECHA:parseInt(req.params.idcosecha)
             },
             include:{
-                lotes:true
+                lotes:true,
+                cosechas:true
+            }
+        });
+
+        if (!historialFound) {
+            return res.status(404).json({ error: "historial not found" });
+        }else{
+            res.status(200).json(historialFound);
+        }
+
+        
+    } catch (error) {
+        console.error("Error fetching historial:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+router.get('/historial/cosechas/lot/:idlote', async (req, res) => {
+    try {
+        const historialFound = await orm.historial_cosechas.findMany({
+            where: {
+                ID_LOTE:parseInt(req.params.idlote)
+            },
+            include:{
+                lotes:true,
+                cosechas:true
             }
         });
 

@@ -10,12 +10,14 @@ router.get('/cosechas', async (req, res) => {
         const cosechas = await orm.cosechas.findMany({
             
         });
-
+        
         if (cosechas.length !=0) {
+            cosechas.forEach(cosecha => {
+                cosecha.FECHA_COSECHA = cosecha.FECHA_COSECHA.toISOString().split('T')[0];});
+            
+            // Envía la respuesta con los elementos y fecha formateada
             res.json(cosechas);
         }else{
-
-            // Envía la respuesta con los elementos
             res.status(204).json({ info: "Not content" });
         }
     } catch (error) {
@@ -38,6 +40,7 @@ router.get('/cosechas/:id', async (req, res) => {
         if (!foundCosecha) {
             return res.status(404).json({ error: "Cosechas not found" });
         }else{
+            foundCosecha.FECHA_COSECHA = foundCosecha.FECHA_COSECHA.toISOString().split('T')[0];
             res.json(foundCosecha);
         }
 
@@ -58,14 +61,14 @@ router.delete('/cosechas/:id',async (req, res) => {
             }
         });
 
-        if (deleteResult) {
-            res.json({ info: "Cosechas deleted successfully" });
-        } else {
-            res.status(404).json({ error: "Cosechas not found" });
+        if (!deleteResult) {
+            return res.status(404).json({ error: "Cosechas not found" });
+        }else{
+            res.json({info:"Cosecha deleted succesfully"});
         }
     } catch (error) {
         console.error("Error deleting Cosechas:", error);
-        res.status(500).json({ error: "Internal server error" });
+        res.status(400).json({ error: "Verify Historial Cosechas - can't delete this" });
     }
 });
 
@@ -91,7 +94,7 @@ router.put('/cosechas/:id', async (req, res) => {
         
     } catch (error) {
         console.error("Error updating Cosechas:", error);
-        return res.status(500).json({ error: "Internal server error" });
+        return res.status(400).json({ error: "Verify data again - can't update this" });
     }
 });
 
@@ -105,7 +108,7 @@ router.post('/cosechas', async (req, res) => {
         res.status(200).json({ info: "Cosechas created!" });
     } catch (error) {
         console.error("Error creating Cosechas:", error);
-        return res.status(400).json({ error: "Cosechas could not be created." });
+        return res.status(400).json({ error: "Cosechas could not be created or already exists." });
     }
 });
 export default router;

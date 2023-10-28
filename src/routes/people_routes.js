@@ -24,7 +24,7 @@ router.get('/person/:id', async (req, res) => {
     try {
         const personFound = await orm.personas.findFirst({
             where: {
-                ID_PERSONA: parseInt(req.params.id)
+                ID_PERSONA: req.params.id
             }
         });
 
@@ -68,7 +68,7 @@ router.put('/person/:id', async (req, res) => {
     try {
         const personUpdate = await orm.personas.update({
             where: {
-                ID_PERSONA: parseInt(req.params.id)
+                ID_PERSONA: req.params.id
             },
             data: req.body
         });
