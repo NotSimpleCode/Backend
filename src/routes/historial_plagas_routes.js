@@ -10,7 +10,8 @@ router.get('/historial/plagas', async (req, res) => {
         // Realiza la consulta a la base de datos para obtener los elementos de la página actual
         const historials = await orm.historial_plagas.findMany({
             include:{
-                plagas:true
+                plagas:true,
+                lotes:true
             }
         });
 
@@ -28,18 +29,40 @@ router.get('/historial/plagas', async (req, res) => {
 
 
 
-
-router.get('/historial/plagas/:idlote/:idplaga', async (req, res) => {
+router.get('/historial/plagas/lote/:idlote', async (req, res) => {
     try {
-        const historialFound = await orm.historial_plagas.findFirst({
+        const historialFound = await orm.historial_plagas.findMany({
             where: {
-                AND: {
-                    ID_LOTE:parseInt(req.params.idlote),
-                    ID_PLAGA:parseInt(req.params.idplaga)
-                }
+                ID_LOTE : parseInt(req.params.idlote)
             },
             include:{
-                plagas:true
+                plagas:true,
+                lotes:true
+            }
+        });
+
+        if (!historialFound) {
+            return res.status(404).json({ error: "historial not found" });
+        }else{
+            res.status(200).json(historialFound);
+        }
+
+        
+    } catch (error) {
+        console.error("Error fetching historial:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+router.get('/historial/plagas/plag/:idplaga', async (req, res) => {
+    try {
+        const historialFound = await orm.historial_plagas.findMany({
+            where: {
+                ID_PLAGA : parseInt(req.params.idplaga)
+            },
+            include:{
+                plagas:true,
+                lotes:true
             }
         });
 
@@ -58,13 +81,15 @@ router.get('/historial/plagas/:idlote/:idplaga', async (req, res) => {
 
 router.delete('/historial/plagas/:idlote/:idplaga', async (req, res) => {
     try {
+        const {FECHA_AFECTACION} = req.body
 
         // Elimina el usuario por su ID_PERSONA y el ID_ROL proporcionado en la ruta
         const deleteResult = await orm.historial_plagas.delete({
             where: {
-                AND: {
-                    ID_LOTE:parseInt(req.params.idlote),
-                    ID_PLAGA:parseInt(req.params.idplaga)
+                ID_LOTE_ID_PLAGA_FECHA_AFECTACION:{
+                    ID_LOTE: parseInt(req.params.idlote),
+                    ID_PLAGA: parseInt(req.params.idplaga),
+                    FECHA_AFECTACION: FECHA_AFECTACION
                 }
             }
         });
@@ -83,23 +108,25 @@ router.delete('/historial/plagas/:idlote/:idplaga', async (req, res) => {
 
 
 
-
-router.put('/historial/plagas/:idlote/:idplaga', async (req, res) => {
+//cambia el estado de una plaga en un lote
+router.patch('/historial/plagas/:idlote/:idplaga', async (req, res) => {
     try {
+        const {FECHA_AFECTACION, ESTADO_PLAGA} = req.body
         const historialUpdate = await orm.historial_plagas.update({
             where: {
-                AND: {
-                    ID_LOTE:parseInt(req.params.idlote),
-                    ID_PLAGA:parseInt(req.params.idplaga)
+                ID_LOTE_ID_PLAGA_FECHA_AFECTACION:{
+                    ID_LOTE: parseInt(req.params.idlote),
+                    ID_PLAGA: parseInt(req.params.idplaga),
+                    FECHA_AFECTACION: FECHA_AFECTACION
                 }
             },
-            data: req.body
+            data: {ESTADO_PLAGA: ESTADO_PLAGA}
         });
 
         if (historialUpdate === null) {
             return res.status(404).json({ error: "historial not found" });
         }else{
-            return res.json({ info: "historial updated successfully" });
+            return res.json({ info: "plague status updated successfully" });
         }
 
         
