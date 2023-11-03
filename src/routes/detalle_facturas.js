@@ -9,7 +9,14 @@ router.get('/detalle_facturas', async (req, res) => {
 
         // Realiza la consulta a la base de datos para obtener los elementos de la página actual
         const detalle_facturas = await orm.detalle_facturas.findMany({
-            
+            include:{
+                productos:true,
+                ventas:{
+                    include:{
+                        personas:true
+                    }
+                }
+            }
         });
 
         if(detalle_facturas != 0){
@@ -31,23 +38,31 @@ router.get('/detalle_facturas/:idventa/:idproducto', async (req, res) => {
     try {
         const Found = await orm.detalle_facturas.findFirst({
             where: {
-                ID_VENTA_ID_PRODUCTO: {
+                AND: {
                     ID_VENTA:parseInt(req.params.idventa),
                     ID_PRODUCTO:parseInt(req.params.idproducto)
                 }
-            }
+            },
+            include:{
+                productos:true,
+                ventas:{
+                    include:{
+                        personas:true
+                    }
+                }
+            },
         });
 
         if (!Found) {
-            return res.status(404).json({ error: "Venta Not Found" });
+            return res.status(404).json({ error: "Detalle Not Found" });
         }else{
             res.status(200).json(Found);
         }
 
         
     } catch (error) {
-        console.error("Error fetching venta:", error);
-        res.status(500).json({ error: "Internal server error" });
+        console.error("Error fetching Detalle:", error);
+        res.status(500).json({ error: "Internal server error Detalle" });
     }
 });
 
@@ -57,7 +72,7 @@ router.delete('/detalle_facturas/:idventa/:idproducto', async (req, res) => {
         // Elimina el usuario por su ID_PERSONA y el ID_ROL proporcionado en la ruta
         const deleteResult = await orm.detalle_facturas.delete({
             where: {
-                ID_VENTA_ID_PRODUCTO: {
+                AND: {
                     ID_VENTA:parseInt(req.params.idventa),
                     ID_PRODUCTO:parseInt(req.params.idproducto)
                 }
@@ -65,9 +80,9 @@ router.delete('/detalle_facturas/:idventa/:idproducto', async (req, res) => {
         });
 
         if (deleteResult) {
-            res.json({ info: "venta deleted successfully" });
+            res.json({ info: "Detalle deleted successfully" });
         } else {
-            res.status(404).json({ error: "Venta Not Found" });
+            res.status(404).json({ error: "Detalle Not Found" });
         }
     } catch (error) {
         console.error("Error deleting :", error);
@@ -83,7 +98,7 @@ router.put('/detalle_facturas/:idventa/:idproducto', async (req, res) => {
     try {
         const Update = await orm.detalle_facturas.update({
             where: {
-                ID_VENTA_ID_PRODUCTO: {
+                AND: {
                     ID_VENTA:parseInt(req.params.idventa),
                     ID_PRODUCTO:parseInt(req.params.idproducto)
                 }
@@ -92,15 +107,15 @@ router.put('/detalle_facturas/:idventa/:idproducto', async (req, res) => {
         });
 
         if (Update === null) {
-            return res.status(404).json({ error: "Venta Not Found" });
+            return res.status(404).json({ error: "Detalle Not Found" });
         }else{
-            return res.json({ info: "updated successfully" });
+            return res.json({ info: "Detalle updated successfully" });
         }
 
         
     } catch (error) {
-        console.error("Error updating :", error);
-        return res.status(500).json({ error: "Internal server error" });
+        console.error("Error updating Detalle:", error);
+        return res.status(500).json({ error: "Internal server error Detalle" });
     }
 });
 
@@ -113,10 +128,10 @@ router.post('/detalle_facturas', async (req, res) => {
 
         
 
-        res.status(200).json({ info: "Venta created!" });
+        res.status(200).json({ info: "Detalle created!" });
     } catch (error) {
-        console.error("Error creating Venta :", error);
-        return res.status(400).json({ error: "Venta could not be created." });
+        console.error("Error creating Detalle :", error);
+        return res.status(400).json({ error: "Detalle could not be created." });
     }
 });
 

@@ -11,6 +11,8 @@ import user_lotes from "./routes/lotes_users_routes.js";
 import sectores from "./routes/sectores_routes.js";
 import tipo_planta from "./routes/tipo_plantas_routes.js";
 import ventas from "./routes/ventas_routes.js";
+import detalle_ventas from "./routes/detalle_facturas.js";
+import productos from "./routes/productos.js";
 
 const app = express();
 
@@ -31,8 +33,11 @@ app.use('/api', tipo_planta);
 app.use('/api', sectores); 
 app.use('/api', cosechas);
 app.use('/api', hist_cosecha);
-app.use('/api', hist_plagas); 
+app.use('/api', hist_plagas);
+
 app.use('/api', ventas);
+app.use('/api', detalle_ventas);
+app.use('/api', productos);
 
 
 const port = process.env.PORT || 3000; // Usa el puerto proporcionado por Azure o el puerto 3000 si no está definido

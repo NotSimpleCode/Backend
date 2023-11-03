@@ -9,7 +9,14 @@ router.get('/ventas', async (req, res) => {
 
         // Realiza la consulta a la base de datos para obtener los elementos de la página actual
         const ventas = await orm.ventas.findMany({
-            
+            include:{
+                personas:true,
+                cosechas:{
+                    select:{
+                        FECHA_COSECHA:true
+                    }
+                }
+            }
         });
 
         if(ventas != 0){
@@ -32,6 +39,14 @@ router.get('/ventas/:idventa', async (req, res) => {
         const Found = await orm.ventas.findFirst({
             where: {
                 ID_VENTA:parseInt(req.params.idventa)
+            },
+            include:{
+                personas:true,
+                cosechas:{
+                    select:{
+                        FECHA_COSECHA:true
+                    }
+                }
             }
         });
 

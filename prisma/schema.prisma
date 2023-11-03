@@ -93,12 +93,12 @@ model usuarios {
 }
 
 model ventas {
-  ID_VENTA          Int                @id
+  ID_VENTA          Int                @id @default(autoincrement())
   ID_PERSONA        String             @db.VarChar(14)
   ID_COSECHA        Int
-  ESTADO_VENTA      String             @db.VarChar(1)
+  ESTADO_VENTA      String             @db.Char(1)
   FECHA_VENTA       DateTime           @db.Date
-  VALOR_TOTAL_VENTA BigInt?
+  VALOR_TOTAL_VENTA Int?               @db.UnsignedInt
   detalle_facturas  detalle_facturas[]
   cosechas          cosechas           @relation(fields: [ID_COSECHA], references: [ID_COSECHA], onUpdate: Restrict, map: "FK_VENTAS_FK_ID_COSECHA")
   personas          personas           @relation(fields: [ID_PERSONA], references: [ID_PERSONA], onUpdate: Restrict, map: "FK_VENTAS_FK_ID_PERSONA")
@@ -111,8 +111,8 @@ model detalle_facturas {
   ID_VENTA                Int
   ID_PRODUCTO             Int
   CANTIDAD_PRODUCTO       Int
-  PRECIO_VENTA_UNITARIO   Int
-  SUBTOTAL_VENTA_PRODUCTO Int
+  PRECIO_VENTA_UNITARIO   Int?
+  SUBTOTAL_VENTA_PRODUCTO Int?      @db.UnsignedInt
   productos               productos @relation(fields: [ID_PRODUCTO], references: [ID_PRODUCTO], onUpdate: Restrict, map: "FK_DETFACT_FK_ID_PRODUCTO")
   ventas                  ventas    @relation(fields: [ID_VENTA], references: [ID_VENTA], onUpdate: Restrict, map: "FK_DETFACT_FK_ID_VENTA")
 
@@ -133,8 +133,8 @@ model lotes_personas {
 }
 
 model productos {
-  ID_PRODUCTO            Int                @id
-  NOMBRE_PRODUCTO        String             @db.VarChar(30)
+  ID_PRODUCTO            Int                @id @default(autoincrement())
+  NOMBRE_PRODUCTO        String             @unique(map: "NOMBRE_PRODUCTO") @db.VarChar(30)
   PRECIO_ACTUAL_PRODUCTO Int
   ESTADO_PRODUCTO        String             @db.Char(1)
   DESCRIPCION_PRODUCTO   String?            @db.VarChar(100)
