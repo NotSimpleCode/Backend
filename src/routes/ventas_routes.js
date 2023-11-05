@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {orm} from "../db.js"
+import * as auth from '../authToken.js'
 
 const router = Router();
 
@@ -111,13 +112,11 @@ router.put('/ventas', async (req, res) => {
 });
 
 
-router.post('/ventas', async (req, res) => {
+router.post('/ventas', auth.authenticateToken, async (req, res) => { //requiere autenticacion para crear ventas
     try {
         const newVenta = await orm.ventas.create({
             data: req.body
         });
-
-        
 
         res.status(200).json({ info: "Venta created!" });
     } catch (error) {
