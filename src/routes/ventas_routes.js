@@ -89,7 +89,7 @@ router.delete('/ventas/:idventa', async (req, res) => {
 
 
 
-router.put('/ventas', async (req, res) => {
+router.put('/ventas/:idventa', async (req, res) => {
     try {
         const Update = await orm.ventas.update({
             where: {
@@ -102,6 +102,29 @@ router.put('/ventas', async (req, res) => {
             return res.status(404).json({ error: "Venta Not Found" });
         }else{
             return res.json({ info: "updated successfully" });
+        }
+
+        
+    } catch (error) {
+        console.error("Error updating :", error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+router.patch('/ventas/:idventa', async (req, res) => {
+    try {
+        const {ESTADO_VENTA} = req.body;
+        const Update = await orm.ventas.update({
+            where: {
+                ID_VENTA:parseInt(req.params.idventa)
+            },
+            data: {ESTADO_VENTA:ESTADO_VENTA}
+        });
+
+        if (Update === null) {
+            return res.status(404).json({ error: "Venta Not Found" });
+        }else{
+            return res.json({ info: "Status updated successfully" });
         }
 
         
