@@ -31,8 +31,63 @@ router.get('/detalle_facturas', async (req, res) => {
     }
 });
 
+router.get('/detalle_facturas/productos/:idproducto', async (req, res) => {
+    try {
+        const Found = await orm.detalle_facturas.findMany({
+            where: {
+                ID_PRODUCTO:parseInt(req.params.idproducto),
+            },
+            include:{
+                productos:true,
+                ventas:{
+                    include:{
+                        personas:true
+                    }
+                }
+            },
+        });
 
+        if (!Found) {
+            return res.status(404).json({ error: "Detalle productos Not Found" });
+        }else{
+            res.status(200).json(Found);
+        }
 
+        
+    } catch (error) {
+        console.error("Error fetching Detalle:", error);
+        res.status(500).json({ error: "Internal server error Detalle" });
+    }
+});
+
+router.get('/detalle_facturas/ventas/:idventa', async (req, res) => {
+    try {
+        const Found = await orm.detalle_facturas.findMany({
+            where: {
+                ID_VENTA:parseInt(req.params.idventa),
+            },
+            include:{
+                productos:true,
+                ventas:{
+                    include:{
+                        personas:true
+                    }
+                }
+            },
+        });
+
+        if (!Found) {
+            return res.status(404).json({ error: "Detalle ventas Not Found" });
+        }else{
+            res.status(200).json(Found);
+        }
+
+        
+    } catch (error) {
+        console.error("Error fetching Detalle:", error);
+        res.status(500).json({ error: "Internal server error Detalle" });
+    }
+});
 
 router.get('/detalle_facturas/:idventa/:idproducto', async (req, res) => {
     try {
@@ -72,7 +127,7 @@ router.delete('/detalle_facturas/:idventa/:idproducto', async (req, res) => {
         // Elimina el usuario por su ID_PERSONA y el ID_ROL proporcionado en la ruta
         const deleteResult = await orm.detalle_facturas.delete({
             where: {
-                AND: {
+                ID_VENTA_ID_PRODUCTO: {
                     ID_VENTA:parseInt(req.params.idventa),
                     ID_PRODUCTO:parseInt(req.params.idproducto)
                 }
@@ -98,7 +153,7 @@ router.put('/detalle_facturas/:idventa/:idproducto', async (req, res) => {
     try {
         const Update = await orm.detalle_facturas.update({
             where: {
-                AND: {
+                ID_VENTA_ID_PRODUCTO: {
                     ID_VENTA:parseInt(req.params.idventa),
                     ID_PRODUCTO:parseInt(req.params.idproducto)
                 }
