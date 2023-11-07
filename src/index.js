@@ -13,6 +13,7 @@ import tipo_planta from "./routes/tipo_plantas_routes.js";
 import ventas from "./routes/ventas_routes.js";
 import detalle_ventas from "./routes/detalle_facturas.js";
 import productos from "./routes/productos.js";
+import plagas from "./routes/plagas_routes.js";
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use('/api', userConnection);
 app.use('/api', lotes); 
 app.use('/api', user_lotes);
 app.use('/api', tipo_planta);
+app.use('/api', plagas);
 app.use('/api', sectores); 
 app.use('/api', cosechas);
 app.use('/api', hist_cosecha);

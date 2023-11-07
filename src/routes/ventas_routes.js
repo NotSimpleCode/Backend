@@ -64,7 +64,7 @@ router.get('/ventas/:idventa', async (req, res) => {
     }
 });
 
-router.delete('/ventas/:idventa', async (req, res) => {
+router.delete('/ventas/:idventa', auth.authenticateToken, async (req, res) => {
     try {
 
         // Elimina el usuario por su ID_PERSONA y el ID_ROL proporcionado en la ruta
@@ -89,7 +89,7 @@ router.delete('/ventas/:idventa', async (req, res) => {
 
 
 
-router.put('/ventas/:idventa', async (req, res) => {
+router.put('/ventas/:idventa', auth.authenticateToken, async (req, res) => {
     try {
         const Update = await orm.ventas.update({
             where: {
@@ -111,7 +111,7 @@ router.put('/ventas/:idventa', async (req, res) => {
     }
 });
 
-router.patch('/ventas/:idventa', async (req, res) => {
+router.patch('/ventas/:idventa', auth.authenticateToken, async (req, res) => {
     try {
         const {ESTADO_VENTA} = req.body;
         const Update = await orm.ventas.update({

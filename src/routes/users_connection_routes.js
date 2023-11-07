@@ -154,6 +154,9 @@ router.post('/login', async (req, res) => {
         const logueo = await orm.usuarios.findFirst({
             where: {
                 NOMBRE_USUARIO: nombre_usuario
+            },
+            include:{
+                roles:true
             }
         });
 
@@ -168,7 +171,7 @@ router.post('/login', async (req, res) => {
                     nombre_usuario: logueo.NOMBRE_USUARIO,
                     password_usuario: logueo.PASSWORD_USUARIO
                 })
-                res.status(200).json({ status: true, info: "Login Successfully", token: token });
+                res.status(200).json({ status: true, info: "Login Successfully", token: token, rol: logueo.roles.NOMBRE_ROL });
             } else {
                 res.status(401).json({ status: false, error: "Incorrect password" });
             }
