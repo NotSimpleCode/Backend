@@ -9,7 +9,7 @@ datasource db {
 
 model cosechas {
   ID_COSECHA         Int                  @id @default(autoincrement())
-  FECHA_COSECHA      DateTime             @unique(map: "UNK_COSECHAS") @db.Date
+  FECHA_COSECHA      DateTime             @unique(map: "FECHA_COSECHA") @db.Date
   historial_cosechas historial_cosechas[]
   ventas             ventas[]
 }
@@ -28,8 +28,8 @@ model historial_plagas {
 
 model lotes {
   ID_LOTE            Int                  @id
+  NOMBRE_LOTE        String               @unique(map: "NOMBRE_LOTE") @db.VarChar(20)
   TOTAL_PLANTAS      Int?                 @default(0)
-  NOMBRE_LOTE        String               @db.VarChar(20)
   historial_cosechas historial_cosechas[]
   historial_plagas   historial_plagas[]
   lotes_personas     lotes_personas[]
@@ -82,9 +82,9 @@ model tipo_plantas {
 model usuarios {
   ID_PERSONA       String   @db.VarChar(14)
   ID_ROL           Int
-  NOMBRE_USUARIO   String   @unique(map: "UNK_USUARIOS") @db.VarChar(20)
+  NOMBRE_USUARIO   String   @unique(map: "UNK_USUARIOS") @db.VarChar(50)
   PASSWORD_USUARIO String   @db.VarChar(255)
-  CORREO_USUARIO   String   @db.VarChar(30)
+  CORREO_USUARIO   String   @db.VarChar(50)
   personas         personas @relation(fields: [ID_PERSONA], references: [ID_PERSONA], onUpdate: Restrict, map: "FK_USUARIOS_FK_ID_PERSONA")
   roles            roles    @relation(fields: [ID_ROL], references: [ID_ROL], onUpdate: Restrict, map: "FK_USUARIOS_FK_ID_ROL")
 
@@ -123,7 +123,7 @@ model detalle_facturas {
 model lotes_personas {
   ID_LOTE           Int
   ID_PERSONA        String   @db.VarChar(14)
-  FECHA_ASIGNACION  DateTime @db.DateTime(0)
+  FECHA_ASIGNACION  DateTime @db.Date
   ESTADO_ASIGNACION String   @db.Char(1)
   lotes             lotes    @relation(fields: [ID_LOTE], references: [ID_LOTE], onUpdate: Restrict, map: "FK_LOTES_USUARIOS_FK_ID_LOTE")
   personas          personas @relation(fields: [ID_PERSONA], references: [ID_PERSONA], onUpdate: Restrict, map: "FK_LOTES_USUARIOS_FK_ID_PERS")
