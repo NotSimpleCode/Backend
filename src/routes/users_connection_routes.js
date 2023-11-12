@@ -66,7 +66,7 @@ router.get('/connection/:id', async (req, res) => {
 
 router.delete('/connection/:id/:id_rol', async (req, res) => {
     try {
-        const usuarioID = parseInt(req.params.id);
+        const usuarioID = req.params.id;
 
         const idRol = parseInt(req.params.id_rol);
 

@@ -43,7 +43,7 @@ router.get('/person/:id', async (req, res) => {
 
 router.delete('/person/:id', async (req, res) => {
     try {
-        const usuarioID = parseInt(req.params.id);
+        const usuarioID = req.params.id;
     
 
         // Elimina la persona por su ID_PERSONA 
